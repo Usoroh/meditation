@@ -68,19 +68,19 @@ type Habits struct {
 var user userInfo
 
 func main() {
-	db := dbConn()
+	// db := dbConn()
 
-	statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS users (id INTEGER AUTO_INCREMENT PRIMARY KEY, username TEXT, password TEXT, admin INTEGER)")
-	if err != nil {
-		fmt.Println(err)
-	}
-	statement.Exec()
+	// statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS users (id INTEGER AUTO_INCREMENT PRIMARY KEY, username TEXT, password TEXT, admin INTEGER)")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// statement.Exec()
 
-	statement, err = db.Prepare("CREATE TABLE IF NOT EXISTS habits (id INTEGER AUTO_INCREMENT PRIMARY KEY, habit TEXT, username TEXT, info TEXT, days INTEGER, times INTEGER, daysDone INTEGER, timesDone INTEGER)")
-	if err != nil {
-		fmt.Println(err)
-	}
-	statement.Exec()
+	// statement, err = db.Prepare("CREATE TABLE IF NOT EXISTS habits (id INTEGER AUTO_INCREMENT PRIMARY KEY, habit TEXT, username TEXT, info TEXT, days INTEGER, times INTEGER, daysDone INTEGER, timesDone INTEGER)")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// statement.Exec()
 	fmt.Println("here it os")
 	static := http.FileServer(http.Dir("public"))
 	http.Handle("/public/", http.StripPrefix("/public/", static))
@@ -100,24 +100,24 @@ func mainPage(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		if user.Logged {
 
-			db := dbConn()
-			rows, err := db.Query("SELECT habit, username, info, days, times, daysDone, timesDone FROM habits WHERE username = ?", user.Username)
-			var habits []Habit
+			// db := dbConn()
+			// rows, err := db.Query("SELECT habit, username, info, days, times, daysDone, timesDone FROM habits WHERE username = ?", user.Username)
+			// var habits []Habit
 
-			if err == nil {
-				for rows.Next() {
-					var h Habit
-					if err := rows.Scan(&h.HabitName, &h.HabitUser, &h.HabitInfo, &h.HabitDays, &h.HabitTimes, &h.HabitDone, &h.TimesDone); err != nil {
-						return
-					}
-					h.Percent = float32(h.HabitDone) / float32(h.HabitDays) * 100
-					habits = append(habits, h)
-				}
-			}
+			// if err == nil {
+			// 	for rows.Next() {
+			// 		var h Habit
+			// 		if err := rows.Scan(&h.HabitName, &h.HabitUser, &h.HabitInfo, &h.HabitDays, &h.HabitTimes, &h.HabitDone, &h.TimesDone); err != nil {
+			// 			return
+			// 		}
+			// 		h.Percent = float32(h.HabitDone) / float32(h.HabitDays) * 100
+			// 		habits = append(habits, h)
+			// 	}
+			// }
 
-			a := Habits{Habits: habits}
+			// a := Habits{Habits: habits}
 			t, _ := template.ParseFiles("templates/index.html")
-			t.Execute(w, a)
+			t.Execute(w, nil)
 		} else {
 			http.Redirect(w, r, "/signin", http.StatusSeeOther)
 		}
