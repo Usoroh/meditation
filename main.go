@@ -92,7 +92,7 @@ func main() {
 	http.HandleFunc("/create", createPage)
 	http.HandleFunc("/add", add)
 
-	http.ListenAndServe(":50820", nil)
+	http.ListenAndServe(getPort(), nil)
 
 }
 
