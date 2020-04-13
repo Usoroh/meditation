@@ -25,9 +25,9 @@ func getPort() string {
 
 func dbConn() (db *sql.DB) {
 	dbDriver := "mysql"
-	dbUser := "root"
-	dbPass := ""
-	dbName := "habits"
+	dbUser := "bd64185d03cbcet"
+	dbPass := "08c17f4b"
+	dbName := "heroku_4438dd451a96a65"
 	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
 	if err != nil {
 		fmt.Println("KOOOOOOOOOL")
@@ -35,6 +35,8 @@ func dbConn() (db *sql.DB) {
 	}
 	return db
 }
+
+// mysql://bd64185d03cbce:08c17f4b@us-cdbr-iron-east-01.cleardb.net/heroku_4438dd451a96a65?reconnect=true
 
 type userInfo struct {
 	Logged   bool
