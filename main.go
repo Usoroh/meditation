@@ -27,8 +27,8 @@ func dbConn() (db *sql.DB) {
 	dbDriver := "mysql"
 	dbUser := "bd64185d03cbcet"
 	dbPass := "08c17f4b"
-	dbName := "heroku_4438dd451a96a65?reconnect=true"
-	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
+	dbName := "heroku_4438dd451a96a65"
+	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@tcp(us-cdbr-iron-east-01.cleardb.net:3306)/"+dbName)
 	if err != nil {
 		fmt.Println(err)
 		panic(err.Error())
