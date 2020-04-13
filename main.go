@@ -117,7 +117,7 @@ func mainPage(w http.ResponseWriter, r *http.Request) {
 
 			a := Habits{Habits: habits}
 			t, _ := template.ParseFiles("templates/index.html")
-			t.Execute(w, nil)
+			t.Execute(w, a)
 		} else {
 			http.Redirect(w, r, "/signin", http.StatusSeeOther)
 		}
