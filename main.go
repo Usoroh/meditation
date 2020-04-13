@@ -255,6 +255,7 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	user.Logged = false
 	user.ID = -1
 	user.Username = ""
+	db.Close()
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
