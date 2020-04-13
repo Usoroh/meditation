@@ -180,7 +180,7 @@ func signinPage(w http.ResponseWriter, r *http.Request) {
 		user.SID = sessionToken
 		user.Username = username
 
-		http.Redirect(w, r, "http://localhost:9090/", http.StatusSeeOther)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
 
