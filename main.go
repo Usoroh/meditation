@@ -17,6 +17,7 @@ import (
 func getPort() string {
 	p := os.Getenv("PORT")
 	if p != "" {
+		fmt.Println(p)
 		return ":" + p
 	}
 	return ":9090"
@@ -78,7 +79,7 @@ func main() {
 		fmt.Println(err)
 	}
 	statement.Exec()
-
+	fmt.Println("here it os")
 	static := http.FileServer(http.Dir("public"))
 	http.Handle("/public/", http.StripPrefix("/public/", static))
 
