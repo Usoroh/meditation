@@ -25,10 +25,10 @@ func getPort() string {
 
 func dbConn() (db *sql.DB) {
 	dbDriver := "mysql"
-	dbUser := "bd64185d03cbcet"
-	dbPass := "08c17f4b"
-	dbName := "heroku_4438dd451a96a65"
-	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@tcp(us-cdbr-iron-east-01.cleardb.net:3306)/"+dbName)
+	// dbUser := "bd64185d03cbcet"
+	// dbPass := "08c17f4b"
+	// dbName := "heroku_4438dd451a96a65"
+	db, err := sql.Open(dbDriver, "bd64185d03cbce:08c17f4b@tcp(us-cdbr-iron-east-01.cleardb.net:3306)/heroku_4438dd451a96a65")
 	if err != nil {
 		fmt.Println(err)
 		panic(err.Error())
