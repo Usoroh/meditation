@@ -36,3 +36,10 @@
 [prune]
   go-tests = true
   unused-packages = true
+
+
+[metadata.heroku]
+  root-package = "github.com/Usoroh/meditation"
+  go-version = "1.14"
+  install = [ "./..." ]
+
