@@ -100,7 +100,15 @@ func main() {
 
 func mainPage(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		if user.Logged {
+		c := ""
+		fmt.Println(len(r.Cookies()))
+		for _, cookie := range r.Cookies() {
+			fmt.Println("cooki:", cookie.Name, cookie.Value)
+			if cookie.Name == "session_token" {
+				c = cookie.Value
+			}
+		}
+		if c != "" {
 
 			db := dbConn()
 			rows, err := db.Query("SELECT habit, username, info, days, times, daysDone, timesDone FROM habits WHERE username = ?", user.Username)
