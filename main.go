@@ -101,17 +101,21 @@ func main() {
 func mainPage(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		c := ""
+		cUname := ""
 		fmt.Println(len(r.Cookies()))
 		for _, cookie := range r.Cookies() {
 			fmt.Println("cooki:", cookie.Name, cookie.Value)
 			if cookie.Name == "session_token" {
 				c = cookie.Value
 			}
+			if cookie.Name == "username" {
+				cUname = cookie.Value
+			}
 		}
 		if c != "" {
 
 			db := dbConn()
-			rows, err := db.Query("SELECT habit, username, info, days, times, daysDone, timesDone FROM habits WHERE username = ?", user.Username)
+			rows, err := db.Query("SELECT habit, username, info, days, times, daysDone, timesDone FROM habits WHERE username = ?", cUname)
 			var habits []Habit
 
 			if err == nil {
@@ -190,9 +194,15 @@ func signinPage(w http.ResponseWriter, r *http.Request) {
 			Expires: time.Now().Add(600 * time.Second),
 		})
 
-		user.Logged = true
-		user.SID = sessionToken
-		user.Username = username
+		http.SetCookie(w, &http.Cookie{
+			Name:    "username",
+			Value:   username,
+			Expires: time.Now().Add(600 * time.Second),
+		})
+
+		// user.Logged = true
+		// user.SID = sessionToken
+		// user.Username = username
 		db.Close()
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
@@ -200,7 +210,15 @@ func signinPage(w http.ResponseWriter, r *http.Request) {
 
 func createPage(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		if user.Logged {
+		c := ""
+		fmt.Println(len(r.Cookies()))
+		for _, cookie := range r.Cookies() {
+			fmt.Println("cooki:", cookie.Name, cookie.Value)
+			if cookie.Name == "session_token" {
+				c = cookie.Value
+			}
+		}
+		if c != "" {
 			t, _ := template.ParseFiles("templates/create.html")
 			t.Execute(w, nil)
 		} else {
@@ -208,8 +226,15 @@ func createPage(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
+		cUname := ""
+		for _, cookie := range r.Cookies() {
+			fmt.Println("cooki:", cookie.Name, cookie.Value)
+			if cookie.Name == "username" {
+				cUname = cookie.Value
+			}
+		}
 		habit := r.FormValue("habit-name")
-		username := user.Username
+		// username := user.Username
 		info := r.FormValue("habit-comment")
 		days := r.FormValue("habit-days")
 		times := r.FormValue("habit-times")
@@ -217,7 +242,7 @@ func createPage(w http.ResponseWriter, r *http.Request) {
 
 		db := dbConn()
 		statement, _ := db.Prepare("INSERT INTO habits (habit, username, info, days, times, daysDone, timesDone) VALUES (?, ?, ?, ?, ?, ?, ?)")
-		statement.Exec(habit, username, info, days, times, done, done)
+		statement.Exec(habit, cUname, info, days, times, done, done)
 		db.Close()
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
