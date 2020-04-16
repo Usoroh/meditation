@@ -67,9 +67,10 @@ type Habits struct {
 
 var user userInfo
 
-var db = dbConn()
+// var db = dbConn()
 
 func main() {
+	db := dbConn()
 	statement, err := db.Prepare("CREATE TABLE IF NOT EXISTS users (id INTEGER AUTO_INCREMENT PRIMARY KEY, username TEXT, password TEXT, admin INTEGER)")
 	if err != nil {
 		fmt.Println(err)
@@ -81,6 +82,7 @@ func main() {
 		fmt.Println(err)
 	}
 	statement.Exec()
+	db.Close()
 	fmt.Println("here it os")
 	static := http.FileServer(http.Dir("public"))
 	http.Handle("/public/", http.StripPrefix("/public/", static))
@@ -100,7 +102,7 @@ func mainPage(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 		if user.Logged {
 
-			// db := dbConn()
+			db := dbConn()
 			rows, err := db.Query("SELECT habit, username, info, days, times, daysDone, timesDone FROM habits WHERE username = ?", user.Username)
 			var habits []Habit
 
@@ -114,7 +116,7 @@ func mainPage(w http.ResponseWriter, r *http.Request) {
 					habits = append(habits, h)
 				}
 			}
-
+			db.Close()
 			a := Habits{Habits: habits}
 			t, _ := template.ParseFiles("templates/index.html")
 			t.Execute(w, a)
@@ -133,10 +135,11 @@ func signupPage(w http.ResponseWriter, r *http.Request) {
 		password := []byte(r.FormValue("password"))
 		hash, _ := bcrypt.GenerateFromPassword(password, 4)
 
-		// db := dbConn()
+		db := dbConn()
 
 		statement, _ := db.Prepare("INSERT INTO users (username, password, admin) VALUES (?, ?, ?)")
 		statement.Exec(username, string(hash), false)
+		db.Close()
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 
 	}
@@ -151,7 +154,7 @@ func signinPage(w http.ResponseWriter, r *http.Request) {
 		password := []byte(r.FormValue("password"))
 		var hash string
 
-		// db := dbConn()
+		db := dbConn()
 
 		err := db.QueryRow("SELECT password FROM users WHERE username = ?", username).Scan(&hash)
 		if err != nil {
@@ -182,7 +185,7 @@ func signinPage(w http.ResponseWriter, r *http.Request) {
 		user.Logged = true
 		user.SID = sessionToken
 		user.Username = username
-
+		db.Close()
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
@@ -204,16 +207,17 @@ func createPage(w http.ResponseWriter, r *http.Request) {
 		times := r.FormValue("habit-times")
 		done := 0
 
-		// db := dbConn()
+		db := dbConn()
 		statement, _ := db.Prepare("INSERT INTO habits (habit, username, info, days, times, daysDone, timesDone) VALUES (?, ?, ?, ?, ?, ?, ?)")
 		statement.Exec(habit, username, info, days, times, done, done)
+		db.Close()
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
 
 func add(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
-		// db := dbConn()
+		db := dbConn()
 
 		username := r.FormValue("habit-user")
 		habit := r.FormValue("habit-name")
@@ -239,6 +243,8 @@ func add(w http.ResponseWriter, r *http.Request) {
 			statement.Exec(username, habit)
 		}
 
+		db.Close()
+
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
@@ -255,7 +261,6 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	user.Logged = false
 	user.ID = -1
 	user.Username = ""
-	db.Close()
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
