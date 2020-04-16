@@ -99,6 +99,7 @@ main {
     /* border: 1px solid black; */
     text-align: center;
     width: 220px;
+    max-height: 320px;
     background-color: white;
     border-radius: 5px;
 
